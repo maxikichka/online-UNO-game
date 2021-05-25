@@ -42,7 +42,7 @@
         cardFieldSet.style["background-color"] = "#000000";
         cardFieldSet.style["font-size"] = "30px";
         cardFieldSet.appendChild(cardNum);
-      } else if (myCards[i].indexOf("plus4-wild") > -1) {
+      } else if (myCards.indexOf("plus4-wild") > -1) {
         let cardNum = document.createElement("legend");
         cardNum.innerText = "+4";
         cardFieldSet.style["background-color"] = "#000000";
@@ -92,6 +92,14 @@
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
         }
+        if (yourTurn) {
+          let placeCardBtn = document.createElement("button");
+          placeCardBtn.innerText = "Place card";
+          placeCardBtn.onclick = function() {
+            alert("Are you sure you want to play this card?");
+          };
+          cardFieldSet.appendChild(placeCardBtn);
+        }
         document.body.appendChild(cardFieldSet);
       }
     }
@@ -99,18 +107,26 @@
 
   <script>
     var socket = io();
+    var yourTurn = false;
 
     let name = prompt("Please enter your name", "");
     socket.emit("looking for match", name);
     let waiting = document.createElement("h1");
     waiting.innerText = "Looking for opponent... ";
+    waiting.id = "statusbar";
     document.body.appendChild(waiting);
 
     socket.on("match found", function(msg) {
       socket.emit("give my cards", "");
     });
     socket.on("here are your cards", function(msg) {
-      console.log("yo");
+      if (msg[2] == "first") {
+        yourTurn = true;
+        document.getElementById("statusbar").innerText = "Your turn!";
+      } else {
+        document.getElementById("statusbar").innerText = "Waiting for someone to move...";
+      }
+      console.log(msg);
       cardToMatch(msg[1])
       generateCards(msg[0]);
     });
