@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+
+    function lookForMatch() {
+      window.location.href = "game.html";
+      return
+      let name = prompt("Please enter your name", "");
+      socket.emit("looking for match", name);
+      document.getElementById("startGameBtn").remove();
+      let waiting = document.createElement("h1");
+      waiting.innerText = "Looking for opponent... ";
+      document.body.appendChild(waiting);
+    }
+
+    socket.on("match found", function(msg) {
+      console.log(msg);
+      window.location.href = "game.html";
+
+    });
+  </script>
+
+<button id="startGameBtn" onclick="lookForMatch()">Look for match</button>
+
+</body>
+</html>
