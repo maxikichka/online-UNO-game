@@ -19,7 +19,7 @@ app.get('/game.html', (req, res) => {
 
 function pickCards(stack) {
   let pickedCards = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 15; i++) {
       let typeOfCardI = Math.floor(Math.random() * stack.length);
 
       let typeOfCard = stack[typeOfCardI].split(" ");

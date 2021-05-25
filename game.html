@@ -4,8 +4,96 @@
   <script src="/socket.io/socket.io.js"></script>
 
   <script>
-    function generateCards() {
-      
+
+    function cardToMatch(myCards) {
+      myCards = myCards.split(" ");
+      let cardFieldSet = document.createElement("fieldset");
+
+      cardFieldSet.style["width"] = "100px";
+      cardFieldSet.style["height"] = "200px";
+
+      if (myCards.indexOf("number-color") > -1) {
+        let cardNum = document.createElement("legend");
+        cardNum.innerText = myCards[0];
+        cardFieldSet.style["background-color"] = myCards[1];
+        cardFieldSet.style["font-size"] = "30px";
+        cardFieldSet.appendChild(cardNum);
+      } else if (myCards.indexOf("reverse-color") > -1) {
+        let cardNum = document.createElement("legend");
+        cardNum.innerText = "r";
+        cardFieldSet.style["background-color"] = myCards[0];
+        cardFieldSet.style["font-size"] = "30px";
+        cardFieldSet.appendChild(cardNum);
+      } else if (myCards.indexOf("plus2-color") > -1) {
+        let cardNum = document.createElement("legend");
+        cardNum.innerText = "+2";
+        cardFieldSet.style["background-color"] = myCards[0];
+        cardFieldSet.style["font-size"] = "30px";
+        cardFieldSet.appendChild(cardNum);
+      } else if (myCards.indexOf("skip-color") > -1) {
+        let cardNum = document.createElement("legend");
+        cardNum.innerText = "skip";
+        cardFieldSet.style["background-color"] = myCards[0];
+        cardFieldSet.style["font-size"] = "30px";
+        cardFieldSet.appendChild(cardNum);
+      } else if (myCards.indexOf("normal-wild") > -1) {
+        let cardNum = document.createElement("legend");
+        cardNum.innerText = "wild";
+        cardFieldSet.style["background-color"] = "#000000";
+        cardFieldSet.style["font-size"] = "30px";
+        cardFieldSet.appendChild(cardNum);
+      } else if (myCards[i].indexOf("plus4-wild") > -1) {
+        let cardNum = document.createElement("legend");
+        cardNum.innerText = "+4";
+        cardFieldSet.style["background-color"] = "#000000";
+        cardFieldSet.style["font-size"] = "30px";
+        cardFieldSet.appendChild(cardNum);
+      }
+      document.body.appendChild(cardFieldSet);
+    }
+
+    function generateCards(myCards) {
+      for (let i = 0; i < myCards.length; i++) {
+        let cardFieldSet = document.createElement("fieldset");
+        if (myCards[i].indexOf("number-color") > -1) {
+          let cardNum = document.createElement("legend");
+          cardNum.innerText = myCards[i][0];
+          cardFieldSet.style["background-color"] = myCards[i][1];
+          cardFieldSet.style["font-size"] = "30px";
+          cardFieldSet.appendChild(cardNum);
+        } else if (myCards[i].indexOf("reverse-color") > -1) {
+          let cardNum = document.createElement("legend");
+          cardNum.innerText = "r";
+          cardFieldSet.style["background-color"] = myCards[i][0];
+          cardFieldSet.style["font-size"] = "30px";
+          cardFieldSet.appendChild(cardNum);
+        } else if (myCards[i].indexOf("plus2-color") > -1) {
+          let cardNum = document.createElement("legend");
+          cardNum.innerText = "+2";
+          cardFieldSet.style["background-color"] = myCards[i][0];
+          cardFieldSet.style["font-size"] = "30px";
+          cardFieldSet.appendChild(cardNum);
+        } else if (myCards[i].indexOf("skip-color") > -1) {
+          let cardNum = document.createElement("legend");
+          cardNum.innerText = "skip";
+          cardFieldSet.style["background-color"] = myCards[i][0];
+          cardFieldSet.style["font-size"] = "30px";
+          cardFieldSet.appendChild(cardNum);
+        } else if (myCards[i].indexOf("normal-wild") > -1) {
+          let cardNum = document.createElement("legend");
+          cardNum.innerText = "wild";
+          cardFieldSet.style["background-color"] = "#000000";
+          cardFieldSet.style["font-size"] = "30px";
+          cardFieldSet.appendChild(cardNum);
+        } else if (myCards[i].indexOf("plus4-wild") > -1) {
+          let cardNum = document.createElement("legend");
+          cardNum.innerText = "+4";
+          cardFieldSet.style["background-color"] = "#000000";
+          cardFieldSet.style["font-size"] = "30px";
+          cardFieldSet.appendChild(cardNum);
+        }
+        document.body.appendChild(cardFieldSet);
+      }
     }
   </script>
 
@@ -18,14 +106,13 @@
     waiting.innerText = "Looking for opponent... ";
     document.body.appendChild(waiting);
 
-    socket.on("here are your cards", function(msg) {
-      console.log(msg)
-    });
     socket.on("match found", function(msg) {
-      socket.emit("give my cards", );
+      socket.emit("give my cards", "");
     });
     socket.on("here are your cards", function(msg) {
-      
+      console.log("yo");
+      cardToMatch(msg[1])
+      generateCards(msg[0]);
     });
   </script>
 
