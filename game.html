@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <body>
-  <script src="/socket.io/socket.io.js"></script>
+	<script src="/socket.io/socket.io.js">
+	</script>
 
-  <script>
-
-    function cardToMatch(myCards) {
+	<script>
+		function cardToMatch(myCards) {
       myCards = myCards.split(" ");
       let cardFieldSet = document.createElement("fieldset");
 
@@ -99,22 +100,23 @@
           placeCardBtn.id = i + " placeCardBtn";
           placeCardBtn.onclick = function(clicked) {
             console.log(cardElements[this.id.split(" ")[0]]);
-            let placeCardPreview = cardElements[this.id.split(" ")[0]];
+            let placeCardPreview = cardElements[this.id.split(" ")[0]].cloneNode(true);
             placeCardPreview.style["position"] = "absolute";
             placeCardPreview.style["left"] = "200px";
-            placeCardPreview.style["top"] = "60px";
+            placeCardPreview.style["top"] = "80px";
+            placeCardPreview.removeAttribute("id");
+            
             document.body.appendChild(placeCardPreview);
-            alert("Are you sure you want to play this card?");
           };
           cardFieldSet.appendChild(placeCardBtn);
         }
         document.body.appendChild(cardFieldSet);
       }
     }
-  </script>
+	</script>
 
-  <script>
-    var socket = io();
+	<script>
+		var socket = io();
     var yourTurn = false;
     var cards = [];
     var cardElements = [];
@@ -141,7 +143,8 @@
       cardToMatch(msg[1])
       generateCards(msg[0]);
     });
-  </script>
+	</script>
 
 </body>
+
 </html>
