@@ -80,24 +80,24 @@ io.on('connection', (socket) => {
   });
   
   socket.on("move", msg => {
-    console.log(msg[1]);
+    console.log(msg);
 
     name = msg[1];
-    msg = msg[0];
+    card = msg[0];
 
     for (let i = 0; i < clients.length; i++) {
-      console.log(clients[i][0]["players"][0].id, clients[i][0]["players"][1].id);
-      console.log(socket.id);
-      console.log(socket in clients[i][0]["players"]);
+      // console.log(clients[i][0]["players"][0].id, clients[i][0]["players"][1].id);
+      // console.log(socket.id);
+      // console.log(socket in clients[i][0]["players"]);
       if (clients[i][0]["players"].indexOf(socket) > -1) {
         console.log(clients[i][0]["players"].length);
         for (let j = 0; j < clients[i][0]["players"].length; j++) {
           if (j == clients[i][0]["players"].indexOf(socket) + 1) {
-            clients[i][0]["players"][j].emit("move", ["your turn", msg]);
+            clients[i][0]["players"][j].emit("move", ["your turn", card]);
           } else if ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 1) && j == 0) {
-            clients[i][0]["players"][j].emit("move", ["your turn", msg]);
+            clients[i][0]["players"][j].emit("move", ["your turn", card]);
           } else {
-            clients[i][0]["players"][j].emit("move", ["waiting for " + name, msg]);
+            clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
           }
 
         }

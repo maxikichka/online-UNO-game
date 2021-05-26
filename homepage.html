@@ -17,11 +17,6 @@
       document.body.appendChild(waiting);
     }
 
-    socket.on("match found", function(msg) {
-      console.log(msg);
-      window.location.href = "game.html";
-
-    });
   </script>
 
 <button id="startGameBtn" onclick="lookForMatch()">Look for match</button>
