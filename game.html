@@ -264,7 +264,6 @@
           
           document.getElementById("statusbar").innerText = "wild card was put and picked " + msg[2] + " color. Waiting for " + msg[0].split(" ")[2] + "...";
         }
-        
       }
       if (yourTurn) {
         for (let i = 0; i < cardElements.length; i++) {
@@ -273,7 +272,7 @@
         }
 
       } else {
-        //Basically just remove all the "place card buttons since its not your turn anymore"
+        //Basically just remove all the "place card" buttons since its not your turn anymore
         for (let i = 0; i < cardElements.length; i++) {
           try {
             document.getElementById(i + " placeCardBtn").remove();
