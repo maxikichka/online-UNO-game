@@ -56,6 +56,10 @@
             } else {
               socket.emit("move", [selectedCard, name]);
             }
+            //user placed card in main stack, remove card from their stack
+            cardElements[cards.indexOf(selectedCard)].remove();
+            cardElements.splice(cards.indexOf(selectedCard), 1);
+            cards.splice(cards.indexOf(selectedCard), 1);
           }
           placeCardPreview.appendChild(confirmOrder);
           
@@ -143,6 +147,8 @@
           cardFieldSet.appendChild(cardNum);
           if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
             makeButton(i, cardFieldSet);
+          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            makeButton(i, cardFieldSet);
           }
         } else if (myCards[i].indexOf("plus2-color") > -1) {
           let cardNum = document.createElement("legend");
@@ -172,6 +178,7 @@
           cardFieldSet.style["background-color"] = "#000000";
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
+
           makeButton(i, cardFieldSet);
         } else if (myCards[i].indexOf("plus4-wild") > -1) {
           let cardNum = document.createElement("legend");
@@ -179,6 +186,7 @@
           cardFieldSet.style["background-color"] = "#000000";
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
+
           makeButton(i, cardFieldSet);
         }
         cardElements.push(cardFieldSet);
@@ -214,13 +222,14 @@
       } else {
         document.getElementById("statusbar").innerText = "Waiting for someone to move...";
       }
-      console.log(msg);
-      cardToMatch(msg[1])
+      cardToMatch(msg[1]);
       generateCards(msg[0]);
     });
 
     socket.on("move", function(msg) {
+      console.log('<----MOVE---->');
       console.log(msg);
+      console.log('<----MOVE---->');
       let cardFieldSet = document.getElementById("cardFieldSet");
       let cardNum = document.getElementById("cardNum");
       let myCards = msg[1];
@@ -246,12 +255,13 @@
 
       if (msg[0] == "your turn") {
         yourTurn = true;
+        document.getElementById("statusbar").innerText = "Your turn MOVE ALREADY";
       } else {
         yourTurn = false;
         document.getElementById("placeCardPreview").remove();
 
-
         if (msg[1][1] == "normal-wild" || msg[1][1] == "plus4-wild") {
+          //translate colors into hex value
           if (msg[2] == "red") {
             color_if_wild = "#FF0000";
           } else if (msg[2] == "blue") {
@@ -261,19 +271,47 @@
           } else if (msg[2] == "green") {
             color_if_wild = "#00FF00";
           }
-          
           document.getElementById("statusbar").innerText = "wild card was put and picked " + msg[2] + " color. Waiting for " + msg[0].split(" ")[2] + "...";
+        } else {
+          document.getElementById("statusbar").innerText = "Waiting for someone...";
         }
       }
       if (yourTurn) {
         for (let i = 0; i < cardElements.length; i++) {
-
-          makeButton(i, cardElements[i]);
+          if (cards[i].indexOf("number-color") > -1) {
+            if ((cards[i][1]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || cards[i][0] == document.getElementById("cardNum").innerText) {
+              makeButton(i, cardElements[i]);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(i, cardElements[i]);
+            }
+          } else if (cards[i].indexOf("reverse-color") > -1) {
+            if ((cards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
+              makeButton(i, cardElements[i]);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(i, cardElements[i]);
+            }
+          } else if (cards[i].indexOf("plus2-color") > -1) {
+            if ((cards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
+              makeButton(i, cardElements[i]);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(i, cardElements[i]);
+            }
+          } else if (cards[i].indexOf("skip-color") > -1) {
+            if ((cards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
+              makeButton(i, cardElements[i]);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(i, cardElements[i]);
+            }
+          } else if (cards[i].indexOf("normal-wild") > -1) {
+            makeButton(i, cardElements[i]);
+          } else if (cards[i].indexOf("plus4-wild") > -1) {
+            makeButton(i, cardElements[i]);
+          }
         }
 
       } else {
         //Basically just remove all the "place card" buttons since its not your turn anymore
-        for (let i = 0; i < cardElements.length; i++) {
+        for (let i = 0; i <= cardElements.length; i++) {
           try {
             document.getElementById(i + " placeCardBtn").remove();
           } catch (TypeError) {
