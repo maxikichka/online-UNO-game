@@ -58,18 +58,21 @@ io.on('connection', (socket) => {
     clients[clients.length - 1][0]["cardStack"] = newCards[0];
 
     //console.log(newCards[1]);
-    //console.log(newCards1[1]);
 
     let startingCard = clients[clients.length - 1][0]["startingCard"];
 
     console.log(startingCard);
 
+    if (clients[clients.length - 1][0]["first"] == "notset") {
+      clients[clients.length - 1][0]["first"] = Math.floor(Math.random() * clients[clients.length - 1][0]["players"].length)
+    }
+
     let whoGoesFirst = clients[clients.length - 1][0]["first"];
 
     if (clients[clients.length - 1][0]["players"].indexOf(socket) == whoGoesFirst) {
-      socket.emit("here are your cards", [newCards1[1], startingCard, "first"]);
+      socket.emit("here are your cards", [newCards[1], startingCard, "first"]);
     } else {
-      socket.emit("here are your cards", [newCards1[1], startingCard, "second"]);
+      socket.emit("here are your cards", [newCards[1], startingCard, "second"]);
     }
 
   });
@@ -94,43 +97,18 @@ io.on('connection', (socket) => {
           if (card[1] == "reverse-color") {
             //if card is reverse
             if ((j == clients[i][0]["players"].indexOf(socket) - 1) || ((clients[i][0]["players"].indexOf(socket) == 0) && j == clients[i][0]["players"].length - 1)) {
-              if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
-                console.log("this is a wild");
-                //previous picker gotta pick a color then send it to next client with the wild card
-                clients[i][0]["players"][j].emit("move", ["your turn", card, msg[2]]);
-              } else {
-                clients[i][0]["players"][j].emit("move", ["your turn", card]);
-              }
+              clients[i][0]["players"][j].emit("move", ["your turn", card]);
             } else {
-              if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
-                console.log("this is a wild");
-                //previous picker gotta pick a color then send it to next client with the wild card
-                clients[i][0]["players"][j].emit("move", ["waiting for " + name, card, msg[2]]);
-              } else {
-                clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
-              }
+              clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
             }
 
           } else if (card[1] == "skip-color") {
             //if card is skip
             if ((j == clients[i][0]["players"].indexOf(socket) + 2) || ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 2) && j == 0) || ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 1) && j == 1)) {
-              if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
-                console.log("this is a wild");
-                //previous picker gotta pick a color then send it to next client with the wild card
-                clients[i][0]["players"][j].emit("move", ["your turn", card, msg[2]]);
-              } else {
                 clients[i][0]["players"][j].emit("move", ["your turn", card]);
-              }
             } else {
-              if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
-                console.log("this is a wild");
-                //previous picker gotta pick a color then send it to next client with the wild card
-                clients[i][0]["players"][j].emit("move", ["waiting for " + name, card, msg[2]]);
-              } else {
                 clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
-              }
             }
-
 
           } else {
             //if card is not reverse

@@ -230,7 +230,7 @@
     let stop_searching = document.createElement("button");
     stop_searching.innerText = "Start game with {num} players"
     stop_searching.onclick = function() {
-      socket.emit("stop searching", );
+      socket.emit("stop searching", "");
     }
     document.body.appendChild(stop_searching);
 
