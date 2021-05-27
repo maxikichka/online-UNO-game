@@ -299,31 +299,31 @@
       if (yourTurn) {
         for (let i = 0; i < cardElements.length; i++) {
           if (cards[i].indexOf("number-color") > -1) {
-            console.log(color_if_wild, convert(document.getElementById("cardFieldSet").style["background-color"]));
+            console.log(color_if_wild, convert(cardElements[i].style["background-color"]));
             if ((cards[i][1]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || cards[i][0] == document.getElementById("cardNum").innerText) {
               makeButton(i, cardElements[i]);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            } else if ((color_if_wild).toLowerCase() == convert(cardElements[i].style["background-color"])) {
               makeButton(i, cardElements[i]);
             }
           } else if (cards[i].indexOf("reverse-color") > -1) {
             console.log(color_if_wild, convert(document.getElementById("cardFieldSet").style["background-color"]));
             if ((cards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
               makeButton(i, cardElements[i]);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            } else if ((color_if_wild).toLowerCase() == convert(cardElements[i].style["background-color"])) {
               makeButton(i, cardElements[i]);
             }
           } else if (cards[i].indexOf("plus2-color") > -1) {
             console.log(color_if_wild, convert(document.getElementById("cardFieldSet").style["background-color"]));
             if ((cards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
               makeButton(i, cardElements[i]);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            } else if ((color_if_wild).toLowerCase() == convert(cardElements[i].style["background-color"])) {
               makeButton(i, cardElements[i]);
             }
           } else if (cards[i].indexOf("skip-color") > -1) {
             console.log(color_if_wild, convert(document.getElementById("cardFieldSet").style["background-color"]));
             if ((cards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
               makeButton(i, cardElements[i]);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            } else if ((color_if_wild).toLowerCase() == convert(cardElements[i].style["background-color"])) {
               makeButton(i, cardElements[i]);
             }
           } else if (cards[i].indexOf("normal-wild") > -1) {
