@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
     console.log(msg);
     if (clients.length == 0) {
       let startingCard = cardStack[Math.floor(Math.random() * cardStack.length)];
-      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": Math.round(Math.random(0, playerCount - 1)), "searching": "yes"}]);
+      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": "notset", "searching": "yes"}]);
       clients[clients.length - 1][0]["cardStack"].splice(clients[clients.length - 1][0]["cardStack"].indexOf(startingCard), 1);
     } else if (clients[clients.length - 1][0]["searching"] == "yes") {
       //console.log(clients[clients.length - 1][0]);
@@ -56,9 +56,6 @@ io.on('connection', (socket) => {
   socket.on('give my cards', msg => {
     let newCards = pickCards(clients[clients.length - 1][0]["cardStack"]);
     clients[clients.length - 1][0]["cardStack"] = newCards[0];
-
-    let newCards1 = pickCards(clients[clients.length - 1][0]["cardStack"]);
-    clients[clients.length - 1][0]["cardStack"] = newCards1[0];
 
     //console.log(newCards[1]);
     //console.log(newCards1[1]);
@@ -162,9 +159,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on("stop searching", function(msg) {
-    socket.emit("match found", "");
-    let first_to_go = 
-    clients[clients.length - 1][0]["players"][0].emit("match found", clients[clients.length - 1][0]["players"][0].id);
+    for (let i = 0; i < clients[clients.length - 1][0]["players"].length; i++) {
+      clients[clients.length - 1][0]["players"][i].emit("match found");
+    }
     clients[clients.length - 1][0]["searching"] = "no";
   })
 
