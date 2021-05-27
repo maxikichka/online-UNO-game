@@ -8,6 +8,8 @@
 	<script>
 
     function convert(rgb) {
+      //This is just a function to convert an rgb value to a hex value
+
       if (/^#[0-9A-F]{6}$/i.test(rgb)) return rgb;
 
       rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
@@ -56,12 +58,6 @@
             }
           }
           placeCardPreview.appendChild(confirmOrder);
-          
-          // let placeCardPreview = cardElements[this.id.split(" ")[0]].cloneNode(true);
-          // placeCardPreview.style["position"] = "absolute";
-          // placeCardPreview.style["left"] = "200px";
-          // placeCardPreview.style["top"] = "80px";
-          // placeCardPreview.removeAttribute("id");
           
           document.body.appendChild(placeCardPreview);
         };
@@ -124,7 +120,6 @@
     }
 
     function generateCards(myCards) {
-
       //PUT PERSONS CARDS
       for (let i = 0; i < myCards.length; i++) {
         let cardFieldSet = document.createElement("fieldset");
@@ -193,6 +188,7 @@
 	</script>
 
 	<script>
+    //START
 		var socket = io();
     var yourTurn = false;
     var cards = [];
@@ -272,20 +268,18 @@
       }
       if (yourTurn) {
         for (let i = 0; i < cardElements.length; i++) {
-          
-          makeButton(i, cardElements[i]);
 
+          makeButton(i, cardElements[i]);
         }
 
       } else {
+        //Basically just remove all the "place card buttons since its not your turn anymore"
         for (let i = 0; i < cardElements.length; i++) {
           try {
             document.getElementById(i + " placeCardBtn").remove();
           } catch (TypeError) {
             //
-
           }
-          
         }
       }
 
