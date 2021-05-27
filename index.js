@@ -17,9 +17,9 @@ app.get('/game.html', (req, res) => {
   res.sendFile(__dirname + '/game.html');
 });
 
-function pickCards(stack) {
+function pickCards(stack, amount) {
   let pickedCards = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < amount; i++) {
       let typeOfCardI = Math.floor(Math.random() * stack.length);
 
       let typeOfCard = stack[typeOfCardI].split(" ");
@@ -48,13 +48,13 @@ io.on('connection', (socket) => {
       clients[clients.length - 1][0]["players"].push(socket);
     } else if (clients[clients.length - 1][0]["searching"] == "no") {
       let startingCard = cardStack[Math.floor(Math.random() * cardStack.length)];
-      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": Math.round(Math.random(0, playerCount - 1)), "searching": "yes"}]);
+      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": "notset", "searching": "yes"}]);
       clients[clients.length - 1][0]["cardStack"].splice(clients[clients.length - 1][0]["cardStack"].indexOf(startingCard), 1);
     }
   });
 
   socket.on('give my cards', msg => {
-    let newCards = pickCards(clients[clients.length - 1][0]["cardStack"]);
+    let newCards = pickCards(clients[clients.length - 1][0]["cardStack"], 7);
     clients[clients.length - 1][0]["cardStack"] = newCards[0];
 
     //console.log(newCards[1]);
@@ -111,20 +111,34 @@ io.on('connection', (socket) => {
             }
 
           } else {
-            //if card is not reverse
+            //if card is not reverse or skip
             if ((j == clients[i][0]["players"].indexOf(socket) + 1) || ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 1) && j == 0)) {
-              if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
-                console.log("this is a wild");
+              if (card[1] == "normal-wild") {
                 //previous picker gotta pick a color then send it to next client with the wild card
                 clients[i][0]["players"][j].emit("move", ["your turn", card, msg[2]]);
+              } else if (card[1] == "plus4-wild") {
+                let newCards = pickCards(clients[i][0]["cardStack"], 4);
+                clients[i][0]["cardStack"] = newCards[0];
+                clients[i][0]["players"][j].emit("move", ["your turn", card, msg[2], newCards[1]]);
+              } else if (card[1] == "plus2-color") {
+                let newCards = pickCards(clients[i][0]["cardStack"], 2);
+                clients[i][0]["cardStack"] = newCards[0];
+                clients[i][0]["players"][j].emit("move", ["your turn", card, newCards[1]]);
               } else {
                 clients[i][0]["players"][j].emit("move", ["your turn", card]);
               }
             } else {
-              if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
-                console.log("this is a wild");
+              if (card[1] == "normal-wild") {
                 //previous picker gotta pick a color then send it to next client with the wild card
                 clients[i][0]["players"][j].emit("move", ["waiting for " + name, card, msg[2]]);
+              } else if (card[1] == "plus4-wild") {
+                let newCards = pickCards(clients[i][0]["cardStack"], 4);
+                clients[i][0]["cardStack"] = newCards[0];
+                clients[i][0]["players"][j].emit("move", ["waiting for " + name, card, msg[2], newCards[1]]);
+              } else if (card[1] == "plus2-color") {
+                let newCards = pickCards(clients[i][0]["cardStack"], 2);
+                clients[i][0]["cardStack"] = newCards[0];
+                clients[i][0]["players"][j].emit("move", ["waiting for " + name, card, newCards[1]]);
               } else {
                 clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
               }
