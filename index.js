@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
 
           } else if (card[1] == "skip-color") {
             //if card is skip
-            if ((j == clients[i][0]["players"].indexOf(socket) - 1) || ((clients[i][0]["players"].indexOf(socket) == 0) && j == clients[i][0]["players"].length - 1)) {
+            if ((j == clients[i][0]["players"].indexOf(socket) + 2) || ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 2) && j == 0) || ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 1) && j == 1)) {
               if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
                 console.log("this is a wild");
                 //previous picker gotta pick a color then send it to next client with the wild card

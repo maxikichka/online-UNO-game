@@ -7,6 +7,16 @@
 
 	<script>
 
+    function removeAllBtns() {
+      for (let i = 0; i <= cardElements.length; i++) {
+        try {
+          document.getElementById(i + " placeCardBtn").remove();
+        } catch (TypeError) {
+          //
+        }
+      }
+    }
+
     function convert(rgb) {
       //This is just a function to convert an rgb value to a hex value
 
@@ -50,6 +60,12 @@
           let confirmOrder = document.createElement("button");
           confirmOrder.innerText = "<------ confirm card";
           confirmOrder.onclick = function() {
+            removeAllBtns();
+            try {
+              document.getElementById("placeCardPreview").remove();
+            } catch (TypeError) {
+              //
+            }
             if (selectedCard[1] == "normal-wild" || selectedCard[1] == "plus4-wild") {
               let color_picked = prompt("You picked a wild card. Please pick a color: ", "red");
               socket.emit("move", [selectedCard, name, color_picked]);
@@ -258,7 +274,6 @@
         document.getElementById("statusbar").innerText = "Your turn MOVE ALREADY";
       } else {
         yourTurn = false;
-        document.getElementById("placeCardPreview").remove();
 
         if (msg[1][1] == "normal-wild" || msg[1][1] == "plus4-wild") {
           //translate colors into hex value
@@ -309,15 +324,6 @@
           }
         }
 
-      } else {
-        //Basically just remove all the "place card" buttons since its not your turn anymore
-        for (let i = 0; i <= cardElements.length; i++) {
-          try {
-            document.getElementById(i + " placeCardBtn").remove();
-          } catch (TypeError) {
-            //
-          }
-        }
       }
 
     });
