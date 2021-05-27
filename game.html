@@ -49,9 +49,11 @@
           confirmOrder.innerText = "<------ confirm card";
           confirmOrder.onclick = function() {
             if (selectedCard[1] == "normal-wild" || selectedCard[1] == "plus4-wild") {
-              prompt("You picked a wild card. Please pick a color: ", "red");
+              let color_picked = prompt("You picked a wild card. Please pick a color: ", "red");
+              socket.emit("move", [selectedCard, name, color_picked]);
+            } else {
+              socket.emit("move", [selectedCard, name]);
             }
-            socket.emit("move", [selectedCard, name]);
           }
           placeCardPreview.appendChild(confirmOrder);
           
@@ -135,6 +137,8 @@
           console.log((myCards[i][1]).toLowerCase(), convert(document.getElementById("cardFieldSet").style["background-color"]));
           if ((myCards[i][1]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCards[i][0] == document.getElementById("cardNum").innerText) {
             makeButton(i, cardFieldSet);
+          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            makeButton(i, cardFieldSet);
           }
         } else if (myCards[i].indexOf("reverse-color") > -1) {
           let cardNum = document.createElement("legend");
@@ -153,6 +157,8 @@
           cardFieldSet.appendChild(cardNum);
           if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
             makeButton(i, cardFieldSet);
+          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            makeButton(i, cardFieldSet);
           }
         } else if (myCards[i].indexOf("skip-color") > -1) {
           let cardNum = document.createElement("legend");
@@ -162,6 +168,8 @@
           cardFieldSet.appendChild(cardNum);
           if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
             makeButton(i, cardFieldSet);
+          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            makeButton(i, cardFieldSet);
           }
         } else if (myCards[i].indexOf("normal-wild") > -1) {
           let cardNum = document.createElement("legend");
@@ -169,12 +177,14 @@
           cardFieldSet.style["background-color"] = "#000000";
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
+          makeButton(i, cardFieldSet);
         } else if (myCards[i].indexOf("plus4-wild") > -1) {
           let cardNum = document.createElement("legend");
           cardNum.innerText = "+4";
           cardFieldSet.style["background-color"] = "#000000";
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
+          makeButton(i, cardFieldSet);
         }
         cardElements.push(cardFieldSet);
         document.body.appendChild(cardFieldSet);
@@ -188,6 +198,7 @@
     var cards = [];
     var cardElements = [];
     var selectedCard = "";
+    var color_if_wild = "";
 
     let name = prompt("Please enter your name", "");
     socket.emit("looking for match", name);
@@ -242,51 +253,28 @@
       } else {
         yourTurn = false;
         document.getElementById("placeCardPreview").remove();
+
+
+        if (msg[1][1] == "normal-wild" || msg[1][1] == "plus4-wild") {
+          if (msg[2] == "red") {
+            color_if_wild = "#FF0000";
+          } else if (msg[2] == "blue") {
+            color_if_wild = "#0000FF";
+          } else if (msg[2] == "yellow") {
+            color_if_wild = "#EEFF00";
+          } else if (msg[2] == "green") {
+            color_if_wild = "#00FF00";
+          }
+          
+          document.getElementById("statusbar").innerText = "wild card was put and picked " + msg[2] + " color. Waiting for " + msg[0].split(" ")[2] + "...";
+        }
+        
       }
       if (yourTurn) {
         for (let i = 0; i < cardElements.length; i++) {
-          let placeCardBtn = document.createElement("button");
-          placeCardBtn.innerText = "Place card";
-          placeCardBtn.id = i + " placeCardBtn";
-          placeCardBtn.onclick = function() {
-            console.log(cardElements[this.id.split(" ")[0]]);
+          
+          makeButton(i, cardElements[i]);
 
-            selectedCard = cards[this.id.split(" ")[0]];
-            try {
-              document.getElementById("placeCardPreview").remove();
-            } catch(TypeError) {
-              //
-            }
-
-            let placeCardPreview = document.createElement("fieldset");
-            placeCardPreview.id = "placeCardPreview";
-            placeCardPreview.style["position"] = "absolute";
-            placeCardPreview.style["left"] = "200px";
-            placeCardPreview.style["top"] = "80px";
-            placeCardPreview.style["background-color"] = cardElements[this.id.split(" ")[0]].style["background-color"];
-            let palceCardPreviewLabel = document.createElement("legend");
-            palceCardPreviewLabel.innerText = cardElements[this.id.split(" ")[0]].innerText.split("\n")[0];
-            placeCardPreview.appendChild(palceCardPreviewLabel);
-
-            let confirmOrder = document.createElement("button");
-            confirmOrder.innerText = "<------ confirm card";
-            confirmOrder.onclick = function() {
-              if (selectedCard[1] == "normal-wild" || selectedCard[1] == "plus4-wild") {
-                prompt("You picked a wild card. Please pick a color: ", "red");
-              }
-              socket.emit("move", [selectedCard, name]);
-            }
-            placeCardPreview.appendChild(confirmOrder);
-            
-            // let placeCardPreview = cardElements[this.id.split(" ")[0]].cloneNode(true);
-            // placeCardPreview.style["position"] = "absolute";
-            // placeCardPreview.style["left"] = "200px";
-            // placeCardPreview.style["top"] = "80px";
-            // placeCardPreview.removeAttribute("id");
-            
-            document.body.appendChild(placeCardPreview);
-          }
-          cardElements[i].appendChild(placeCardBtn);
         }
 
       } else {

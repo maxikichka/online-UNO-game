@@ -84,6 +84,7 @@ io.on('connection', (socket) => {
 
     name = msg[1];
     card = msg[0];
+    console.log(card);
 
     for (let i = 0; i < clients.length; i++) {
       // console.log(clients[i][0]["players"][0].id, clients[i][0]["players"][1].id);
@@ -93,19 +94,29 @@ io.on('connection', (socket) => {
         console.log(clients[i][0]["players"].length);
         for (let j = 0; j < clients[i][0]["players"].length; j++) {
           if (j == clients[i][0]["players"].indexOf(socket) + 1) {
-            clients[i][0]["players"][j].emit("move", ["your turn", card]);
+            if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
+              console.log("this is a wild");
+              //previous picker gotta pick a color then send it to next client with the wild card
+              clients[i][0]["players"][j].emit("move", ["your turn", card, msg[2]]);
+            } else {
+              clients[i][0]["players"][j].emit("move", ["your turn", card]);
+            }
           } else if ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 1) && j == 0) {
-            if (msg[1][1] == "normal-wild" || msg[1][1] == "plus4-wild") {
+            if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
+              console.log("this is a wild");
               //previous picker gotta pick a color then send it to next client with the wild card
-              clients[i][0]["players"][j].emit("move", ["your turn", card, ""]);
+              clients[i][0]["players"][j].emit("move", ["your turn", card, msg[2]]);
+            } else {
+              clients[i][0]["players"][j].emit("move", ["your turn", card]);
             }
-            clients[i][0]["players"][j].emit("move", ["your turn", card]);
           } else {
-            if (msg[1][1] == "normal-wild" || msg[1][1] == "plus4-wild") {
+            if (card[1] == "normal-wild" || card[1] == "plus4-wild") {
+              console.log("this is a wild");
               //previous picker gotta pick a color then send it to next client with the wild card
-              clients[i][0]["players"][j].emit("move", ["your turn", card, ""]);
+              clients[i][0]["players"][j].emit("move", ["waiting for " + name, card, msg[2]]);
+            } else {
+              clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
             }
-            clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
           }
 
         }
