@@ -95,8 +95,16 @@ io.on('connection', (socket) => {
           if (j == clients[i][0]["players"].indexOf(socket) + 1) {
             clients[i][0]["players"][j].emit("move", ["your turn", card]);
           } else if ((clients[i][0]["players"].indexOf(socket) == clients[i][0]["players"].length - 1) && j == 0) {
+            if (msg[1][1] == "normal-wild" || msg[1][1] == "plus4-wild") {
+              //previous picker gotta pick a color then send it to next client with the wild card
+              clients[i][0]["players"][j].emit("move", ["your turn", card, ""]);
+            }
             clients[i][0]["players"][j].emit("move", ["your turn", card]);
           } else {
+            if (msg[1][1] == "normal-wild" || msg[1][1] == "plus4-wild") {
+              //previous picker gotta pick a color then send it to next client with the wild card
+              clients[i][0]["players"][j].emit("move", ["your turn", card, ""]);
+            }
             clients[i][0]["players"][j].emit("move", ["waiting for " + name, card]);
           }
 

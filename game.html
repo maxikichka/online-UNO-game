@@ -48,6 +48,9 @@
           let confirmOrder = document.createElement("button");
           confirmOrder.innerText = "<------ confirm card";
           confirmOrder.onclick = function() {
+            if (selectedCard[1] == "normal-wild" || selectedCard[1] == "plus4-wild") {
+              prompt("You picked a wild card. Please pick a color: ", "red");
+            }
             socket.emit("move", [selectedCard, name]);
           }
           placeCardPreview.appendChild(confirmOrder);
@@ -268,6 +271,9 @@
             let confirmOrder = document.createElement("button");
             confirmOrder.innerText = "<------ confirm card";
             confirmOrder.onclick = function() {
+              if (selectedCard[1] == "normal-wild" || selectedCard[1] == "plus4-wild") {
+                prompt("You picked a wild card. Please pick a color: ", "red");
+              }
               socket.emit("move", [selectedCard, name]);
             }
             placeCardPreview.appendChild(confirmOrder);
