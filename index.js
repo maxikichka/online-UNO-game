@@ -40,17 +40,15 @@ io.on('connection', (socket) => {
     console.log(msg);
     if (clients.length == 0) {
       let startingCard = cardStack[Math.floor(Math.random() * cardStack.length)];
-      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": Math.round(Math.random(0, playerCount - 1))}]);
+      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": Math.round(Math.random(0, playerCount - 1)), "searching": "yes"}]);
       clients[clients.length - 1][0]["cardStack"].splice(clients[clients.length - 1][0]["cardStack"].indexOf(startingCard), 1);
-    } else if (clients[clients.length - 1][0]["players"].length == 1) {
+    } else if (clients[clients.length - 1][0]["searching"] == "yes") {
       //console.log(clients[clients.length - 1][0]);
-      //THEY GOT PAIRED UP
+      //Player joined their game
       clients[clients.length - 1][0]["players"].push(socket);
-      socket.emit("match found", "");
-      clients[clients.length - 1][0]["players"][0].emit("match found", clients[clients.length - 1][0]["players"][0].id);
-    } else if (clients[clients.length - 1][0]["players"].length == 2) {
+    } else if (clients[clients.length - 1][0]["searching"] == "no") {
       let startingCard = cardStack[Math.floor(Math.random() * cardStack.length)];
-      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": Math.round(Math.random(0, playerCount - 1))}]);
+      clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": Math.round(Math.random(0, playerCount - 1)), "searching": "yes"}]);
       clients[clients.length - 1][0]["cardStack"].splice(clients[clients.length - 1][0]["cardStack"].indexOf(startingCard), 1);
     }
   });
@@ -162,6 +160,13 @@ io.on('connection', (socket) => {
       }
     }
   });
+
+  socket.on("stop searching", function(msg) {
+    socket.emit("match found", "");
+    let first_to_go = 
+    clients[clients.length - 1][0]["players"][0].emit("match found", clients[clients.length - 1][0]["players"][0].id);
+    clients[clients.length - 1][0]["searching"] = "no";
+  })
 
 });
 

@@ -222,10 +222,17 @@
 
     let name = prompt("Please enter your name", "");
     socket.emit("looking for match", name);
+    //"stop searching"
     let waiting = document.createElement("h1");
     waiting.innerText = "Looking for opponent... ";
     waiting.id = "statusbar";
     document.body.appendChild(waiting);
+    let stop_searching = document.createElement("button");
+    stop_searching.innerText = "Start game with {num} players"
+    stop_searching.onclick = function() {
+      socket.emit("stop searching", );
+    }
+    document.body.appendChild(stop_searching);
 
     socket.on("match found", function(msg) {
       socket.emit("give my cards", "");
