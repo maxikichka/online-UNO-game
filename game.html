@@ -139,7 +139,7 @@
       document.body.appendChild(cardFieldSet);
     }
 
-    function generateCards(myCards) {
+    function generateCards(myCards, isAdding) {
       //PUT PERSONS CARDS
       for (let i = 0; i < myCards.length; i++) {
         let cardFieldSet = document.createElement("fieldset");
@@ -150,10 +150,12 @@
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
           //console.log((myCards[i][1]).toLowerCase(), convert(document.getElementById("cardFieldSet").style["background-color"]));
-          if ((myCards[i][1]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCards[i][0] == document.getElementById("cardNum").innerText) {
-            makeButton(i, cardFieldSet);
-          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
-            makeButton(i, cardFieldSet);
+          if (!isAdding) {
+            if ((myCards[i][1]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCards[i][0] == document.getElementById("cardNum").innerText) {
+              makeButton(cards.length, cardFieldSet);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(cards.length, cardFieldSet);
+            }
           }
         } else if (myCards[i].indexOf("reverse-color") > -1) {
           let cardNum = document.createElement("legend");
@@ -161,10 +163,12 @@
           cardFieldSet.style["background-color"] = myCards[i][0];
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
-          if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
-            makeButton(i, cardFieldSet);
-          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
-            makeButton(i, cardFieldSet);
+          if (!isAdding) {
+            if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
+              makeButton(cards.length, cardFieldSet);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(cards.length, cardFieldSet);
+            }
           }
         } else if (myCards[i].indexOf("plus2-color") > -1) {
           let cardNum = document.createElement("legend");
@@ -172,10 +176,12 @@
           cardFieldSet.style["background-color"] = myCards[i][0];
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
-          if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
-            makeButton(i, cardFieldSet);
-          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
-            makeButton(i, cardFieldSet);
+          if (!isAdding) {
+            if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
+              makeButton(cards.length, cardFieldSet);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(cards.length, cardFieldSet);
+            }
           }
         } else if (myCards[i].indexOf("skip-color") > -1) {
           let cardNum = document.createElement("legend");
@@ -183,10 +189,12 @@
           cardFieldSet.style["background-color"] = myCards[i][0];
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
-          if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
-            makeButton(i, cardFieldSet);
-          } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
-            makeButton(i, cardFieldSet);
+          if (!isAdding) {
+            if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
+              makeButton(cards.length, cardFieldSet);
+            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+              makeButton(cards.length, cardFieldSet);
+            }
           }
         } else if (myCards[i].indexOf("normal-wild") > -1) {
           let cardNum = document.createElement("legend");
@@ -194,18 +202,21 @@
           cardFieldSet.style["background-color"] = "#000000";
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
-
-          makeButton(i, cardFieldSet);
+          if (!isAdding) {
+            makeButton(cards.length, cardFieldSet);
+          }
         } else if (myCards[i].indexOf("plus4-wild") > -1) {
           let cardNum = document.createElement("legend");
           cardNum.innerText = "+4";
           cardFieldSet.style["background-color"] = "#000000";
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
-
-          makeButton(i, cardFieldSet);
+          if (!isAdding) {
+            makeButton(cards.length, cardFieldSet);
+          }
         }
         cardElements.push(cardFieldSet);
+        cards.push(myCards[i]);
         document.body.appendChild(cardFieldSet);
       }
     }
@@ -238,7 +249,6 @@
       socket.emit("give my cards", "");
     });
     socket.on("here are your cards", function(msg) {
-      cards = msg[0];
       if (msg[2] == "first") {
         yourTurn = true;
         document.getElementById("statusbar").innerText = "Your turn!";
@@ -246,16 +256,18 @@
         document.getElementById("statusbar").innerText = "Waiting for someone to move...";
       }
       cardToMatch(msg[1]);
-      generateCards(msg[0]);
+      generateCards(msg[0], false);
     });
 
     socket.on("move", function(msg) {
       console.log('<----MOVE---->');
       console.log(msg);
       console.log('<----MOVE---->');
+
       let cardFieldSet = document.getElementById("cardFieldSet");
       let cardNum = document.getElementById("cardNum");
       let myCards = msg[1];
+
       if (myCards.indexOf("number-color") > -1) {
         cardNum.innerText = myCards[0];
         cardFieldSet.style["background-color"] = myCards[1];
@@ -265,6 +277,8 @@
       } else if (myCards.indexOf("plus2-color") > -1) {
         cardNum.innerText = "+2";
         cardFieldSet.style["background-color"] = myCards[0];
+
+
       } else if (myCards.indexOf("skip-color") > -1) {
         cardNum.innerText = "skip";
         cardFieldSet.style["background-color"] = myCards[0];
@@ -298,6 +312,13 @@
         } else {
           color_if_wild = "";
         }
+
+        if (myCards.indexOf("plus2-color") > -1) {
+          generateCards(msg[2], true);
+        } else if (myCards.indexOf("plus4-wild") > -1) {
+          generateCards(msg[3], true);
+        }
+
       } else {
         yourTurn = false;
         //   document.getElementById("statusbar").innerText = "wild card was put and picked " + msg[2] + " color. Waiting for " + msg[0].split(" ")[2] + "...";
