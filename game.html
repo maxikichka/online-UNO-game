@@ -379,11 +379,19 @@
 
         if (count == 0) {
           console.log("you dont have any cards to put get a card from the stack");
+          socket.emit("give me extra card", "");
         }
 
       }
 
     });
+
+
+    socket.on("here extra cards", function(msg) {
+      console.log("egfafg: ");
+      console.log(msg);
+    });
+
 	</script>
 
 </body>
