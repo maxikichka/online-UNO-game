@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-
-<body>
+ <body>
 	<script src="/socket.io/socket.io.js">
 	</script>
 
@@ -76,6 +75,10 @@
             cardElements[cards.indexOf(selectedCard)].remove();
             cardElements.splice(cards.indexOf(selectedCard), 1);
             cards.splice(cards.indexOf(selectedCard), 1);
+            if (cardElements.length == 0) {
+              //user won, no cards, UNO!!!
+              console.log("you won!!");
+            }
           }
           placeCardPreview.appendChild(confirmOrder);
           
