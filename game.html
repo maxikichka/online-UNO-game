@@ -6,6 +6,40 @@
 
 	<script>
 
+    function canCardBePut(myCard) {
+      if (myCard.indexOf("number-color") > -1) {
+        if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCards[0] == document.getElementById("cardNum").innerText) {
+          return true;
+        } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+          return true;
+        }
+      } else if (myCard.indexOf("reverse-color") > -1) {
+        if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
+          return true;
+        } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+          return true;
+        }
+      } else if (myCard.indexOf("plus2-color") > -1) {
+        if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
+          return true;
+        } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+          return true;
+        }
+      } else if (myCard.indexOf("skip-color") > -1) {
+          if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
+            return true;
+          } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            return true;
+          }
+      } else if (myCard.indexOf("normal-wild") > -1) {
+        return true;
+      } else if (myCard.indexOf("plus4-wild") > -1) {
+        return true;
+      } else{
+        return false;
+      }
+    }
+
     function removeAllBtns() {
       for (let i = 0; i <= cardElements.length; i++) {
         try {
@@ -146,6 +180,9 @@
       //PUT PERSONS CARDS
       for (let i = 0; i < myCards.length; i++) {
         let cardFieldSet = document.createElement("fieldset");
+
+        canCardBePut(myCard);
+
         if (myCards[i].indexOf("number-color") > -1) {
           let cardNum = document.createElement("legend");
           cardNum.innerText = myCards[i][0];
@@ -388,8 +425,8 @@
 
 
     socket.on("here extra cards", function(msg) {
-      console.log("egfafg: ");
-      console.log(msg);
+      console.log(canCardBePut(msg));
+
     });
 
 	</script>

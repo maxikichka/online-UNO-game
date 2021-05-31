@@ -216,9 +216,14 @@ io.on('connection', (socket) => {
 
   socket.on("give me extra card", function(msg) {
     //HEY MAX FINISH THIS TO GIVE EXTRA CARD TO CLIENT WITH NO AVAIL
-    let newCards = pickCards(clients[clients.length - 1][0]["cardStack"], 7);
-    clients[clients.length - 1][0]["cardStack"] = newCards[0];
-    clients[i][0]["players"][clients[i][0]["players"].indexOf(socket)].emit("here extra cards", newCards[1]);
+    let newCards = pickCards(clients[clients.length - 1][0]["cardStack"], 1);
+
+    for (let i = 0; i < clients.length; i++){
+      if (clients[clients.length - 1][0]["players"].indexOf(socket) > -1) {
+        clients[clients.length - 1][0]["cardStack"] = newCards[0];
+        clients[i][0]["players"][clients[i][0]["players"].indexOf(socket)].emit("here extra cards", newCards[1]);
+      }
+    }
   });
 
 });
