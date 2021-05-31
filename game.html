@@ -8,25 +8,25 @@
 
     function canCardBePut(myCard) {
       if (myCard.indexOf("number-color") > -1) {
-        if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCards[0] == document.getElementById("cardNum").innerText) {
+        if (myCard[1].toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCard[0] == document.getElementById("cardNum").innerText) {
           return true;
         } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
           return true;
         }
       } else if (myCard.indexOf("reverse-color") > -1) {
-        if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
+        if (myCard[1].toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
           return true;
         } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
           return true;
         }
       } else if (myCard.indexOf("plus2-color") > -1) {
-        if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
+        if (myCard[1].toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
           return true;
         } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
           return true;
         }
       } else if (myCard.indexOf("skip-color") > -1) {
-          if (myCard.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
+          if (myCard[1].toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
             return true;
           } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
             return true;
@@ -181,7 +181,7 @@
       for (let i = 0; i < myCards.length; i++) {
         let cardFieldSet = document.createElement("fieldset");
 
-        canCardBePut(myCard);
+        //canCardBePut(myCard);
 
         if (myCards[i].indexOf("number-color") > -1) {
           let cardNum = document.createElement("legend");
@@ -191,9 +191,7 @@
           cardFieldSet.appendChild(cardNum);
           //console.log((myCards[i][1]).toLowerCase(), convert(document.getElementById("cardFieldSet").style["background-color"]));
           if (!isAdding) {
-            if ((myCards[i][1]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCards[i][0] == document.getElementById("cardNum").innerText) {
-              makeButton(cards.length, cardFieldSet);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            if (canCardBePut(myCards[i])) {
               makeButton(cards.length, cardFieldSet);
             }
           }
@@ -204,9 +202,7 @@
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
           if (!isAdding) {
-            if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "r" == document.getElementById("cardNum").innerText) {
-              makeButton(cards.length, cardFieldSet);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            if (canCardBePut(myCards[i])) {
               makeButton(cards.length, cardFieldSet);
             }
           }
@@ -217,9 +213,7 @@
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
           if (!isAdding) {
-            if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "+2" == document.getElementById("cardNum").innerText) {
-              makeButton(cards.length, cardFieldSet);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            if (canCardBePut(myCards[i])) {
               makeButton(cards.length, cardFieldSet);
             }
           }
@@ -230,9 +224,7 @@
           cardFieldSet.style["font-size"] = "30px";
           cardFieldSet.appendChild(cardNum);
           if (!isAdding) {
-            if ((myCards[i][0]).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
-              makeButton(cards.length, cardFieldSet);
-            } else if ((color_if_wild).toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+            if (canCardBePut(myCards[i])) {
               makeButton(cards.length, cardFieldSet);
             }
           }
@@ -425,8 +417,29 @@
 
 
     socket.on("here extra cards", function(msg) {
-      console.log(canCardBePut(msg));
+      let canCard = canCardBePut(msg);
+      console.log(msg);
+      generateCards(msg, true);
 
+      if (canCard) {
+        selectedCard = cardElements[cardElements.length];
+      }
+
+      removeAllBtns();
+      try {
+        document.getElementById("placeCardPreview").remove();
+      } catch (TypeError) {
+        //
+      }
+      if (selectedCard[1] == "normal-wild" || selectedCard[1] == "plus4-wild") {
+        let color_picked = prompt("You picked a wild card. Please pick a color: ", "red");
+        socket.emit("move", [selectedCard, name, color_picked]);
+      } else {
+        socket.emit("move", [selectedCard, name]);
+      }
+      //user placed card in main stack, remove card from their stack
+      cardElements.splice(cards.indexOf(selectedCard), 1);
+      cards.splice(cards.indexOf(selectedCard), 1);
     });
 
 	</script>
