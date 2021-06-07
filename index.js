@@ -20,13 +20,13 @@ app.get('/game.html', (req, res) => {
 function pickCards(stack, amount) {
   let pickedCards = [];
   for (let i = 0; i < amount; i++) {
-      let typeOfCardI = Math.floor(Math.random() * stack.length);
+    let typeOfCardI = Math.floor(Math.random() * stack.length);
 
-      let typeOfCard = stack[typeOfCardI].split(" ");
-      
-      pickedCards.push(typeOfCard);
+    let typeOfCard = stack[typeOfCardI].split(" ");
+    
+    pickedCards.push(typeOfCard);
 
-      stack.splice(typeOfCardI, 1);
+    stack.splice(typeOfCardI, 1);
   }
   return [stack, pickedCards];
 }
@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
   socket.on('looking for match', msg => {
-    console.log(msg);
+    //console.log(msg);
     if (clients.length == 0) {
       let startingCard = cardStack[Math.floor(Math.random() * cardStack.length)];
       clients.push([{"id": clients.length, "cardStack": cardStack, "startingCard": startingCard, "players": [socket], "first": "notset", "searching": "yes", "direction": 1}]);
@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
 
     let startingCard = clients[clients.length - 1][0]["startingCard"];
 
-    console.log(startingCard);
+    //console.log(startingCard);
 
     if (clients[clients.length - 1][0]["first"] == "notset") {
       clients[clients.length - 1][0]["first"] = Math.floor(Math.random() * clients[clients.length - 1][0]["players"].length)
@@ -78,12 +78,12 @@ io.on('connection', (socket) => {
   });
   
   socket.on("move", msg => {
-    console.log("direction: ");
-    console.log(clients[clients.length - 1][0]["direction"]);
+    //console.log("direction: ");
+    //console.log(clients[clients.length - 1][0]["direction"]);
 
     name = msg[1];
     card = msg[0];
-    console.log(card);
+    //console.log(card);
 
 
     for (let i = 0; i < clients.length; i++) {
@@ -93,7 +93,7 @@ io.on('connection', (socket) => {
 
       //find which game it is the palyer is in
       if (clients[i][0]["players"].indexOf(socket) > -1) {
-        console.log(clients[i][0]["players"].length);
+        //console.log(clients[i][0]["players"].length);
         for (let j = 0; j < clients[i][0]["players"].length; j++) {
           //loop through the players and send them correct specific data
           if (card[1] == "reverse-color") {
@@ -217,10 +217,13 @@ io.on('connection', (socket) => {
   socket.on("give me extra card", function(msg) {
     //HEY MAX FINISH THIS TO GIVE EXTRA CARD TO CLIENT WITH NO AVAIL
     let newCards = pickCards(clients[clients.length - 1][0]["cardStack"], 1);
-
+    clients[clients.length - 1][0]["cardStack"] = newCards[0];
+    console.log(clients[clients.length - 1][0]["cardStack"].length);
+    if (clients[clients.length - 1][0]["cardStack"].length <= 0) {
+      console.log("were out of cards sorry");
+    }
     for (let i = 0; i < clients.length; i++){
       if (clients[clients.length - 1][0]["players"].indexOf(socket) > -1) {
-        clients[clients.length - 1][0]["cardStack"] = newCards[0];
         clients[i][0]["players"][clients[i][0]["players"].indexOf(socket)].emit("here extra cards", newCards[1]);
       }
     }

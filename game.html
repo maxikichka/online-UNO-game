@@ -7,6 +7,7 @@
 	<script>
 
     function canCardBePut(myCard) {
+      console.log(myCard, myCard.indexOf("number-color"));
       if (myCard.indexOf("number-color") > -1) {
         if (myCard[1].toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || myCard[0] == document.getElementById("cardNum").innerText) {
           return true;
@@ -26,11 +27,11 @@
           return true;
         }
       } else if (myCard.indexOf("skip-color") > -1) {
-          if (myCard[1].toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
-            return true;
-          } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
-            return true;
-          }
+        if (myCard[1].toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"]) || "skip" == document.getElementById("cardNum").innerText) {
+          return true;
+        } else if (color_if_wild.toLowerCase() == convert(document.getElementById("cardFieldSet").style["background-color"])) {
+          return true;
+        }
       } else if (myCard.indexOf("normal-wild") > -1) {
         return true;
       } else if (myCard.indexOf("plus4-wild") > -1) {
@@ -353,10 +354,7 @@
 
       } else {
         yourTurn = false;
-        //   document.getElementById("statusbar").innerText = "wild card was put and picked " + msg[2] + " color. Waiting for " + msg[0].split(" ")[2] + "...";
-        // } else {
-        //   document.getElementById("statusbar").innerText = "Waiting for someone...";
-        // }
+        document.getElementById("statusbar").innerText = "Waiting for someone...";
       }
       if (yourTurn) {
         let count = 0;
@@ -417,12 +415,21 @@
 
 
     socket.on("here extra cards", function(msg) {
-      let canCard = canCardBePut(msg);
-      console.log(msg);
+      //console.log(msg.length);
+      let canCard = canCardBePut(msg[0]);
+      //console.log(canCard, msg);
       generateCards(msg, true);
 
       if (canCard) {
         selectedCard = cardElements[cardElements.length];
+        try {
+          console.log(selectedCard.length);
+        } catch (TypeError) {
+          //
+        }
+        //user placed card in main stack, remove card from their stack
+        cardElements.splice(cards.indexOf(selectedCard), 1);
+        cards.splice(cards.indexOf(selectedCard), 1);
       }
 
       removeAllBtns();
@@ -431,15 +438,13 @@
       } catch (TypeError) {
         //
       }
+
       if (selectedCard[1] == "normal-wild" || selectedCard[1] == "plus4-wild") {
         let color_picked = prompt("You picked a wild card. Please pick a color: ", "red");
         socket.emit("move", [selectedCard, name, color_picked]);
       } else {
         socket.emit("move", [selectedCard, name]);
       }
-      //user placed card in main stack, remove card from their stack
-      cardElements.splice(cards.indexOf(selectedCard), 1);
-      cards.splice(cards.indexOf(selectedCard), 1);
     });
 
 	</script>
